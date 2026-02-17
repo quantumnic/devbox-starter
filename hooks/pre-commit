@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Pre-commit hook: run linters before allowing commit
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# TypeScript projects
+if [ -f "tsconfig.json" ]; then
+    echo "  → TypeScript typecheck"
+    npx tsc --noEmit 2>/dev/null || { echo "❌ TypeScript errors found"; exit 1; }
+fi
+
+# ESLint
+if [ -f ".eslintrc.json" ] || [ -f "eslint.config.js" ] || [ -f ".eslintrc.js" ]; then
+    echo "  → ESLint"
+    npx eslint --quiet . 2>/dev/null || { echo "❌ ESLint errors found"; exit 1; }
+fi
+
+# Python
+if [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+    if command -v ruff &>/dev/null; then
+        echo "  → Ruff (Python)"
+        ruff check . || { echo "❌ Ruff errors found"; exit 1; }
+    fi
+fi
+
+# Go
+if [ -f "go.mod" ]; then
+    echo "  → Go vet"
+    go vet ./... || { echo "❌ Go vet errors found"; exit 1; }
+fi
+
+echo "✅ All checks passed"

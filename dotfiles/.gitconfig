@@ -1,0 +1,28 @@
+[user]
+    # Override these per-repo or via environment
+    name = Developer
+    email = dev@example.com
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
+[color]
+    ui = auto
+
+[alias]
+    s = status -sb
+    lg = log --oneline --graph --decorate -20
+    co = checkout
+    br = branch
+    ci = commit
+    unstage = reset HEAD --
+
+[core]
+    editor = vim
+    autocrlf = input
