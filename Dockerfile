@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Go
-RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
+RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" \
     | tar -C /usr/local -xz
 ENV PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
 
@@ -35,8 +35,9 @@ ENV NVM_DIR="/root/.nvm"
 RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
     && . "$NVM_DIR/nvm.sh" \
     && nvm install ${NODE_VERSION} \
-    && nvm alias default ${NODE_VERSION}
-ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}.0.0/bin:${PATH}"
+    && nvm alias default ${NODE_VERSION} \
+    && ln -s "$NVM_DIR/versions/node/$(nvm version default)" "$NVM_DIR/current"
+ENV PATH="/root/.nvm/current/bin:${PATH}"
 
 # GitHub CLI
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
